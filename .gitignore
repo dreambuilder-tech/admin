@@ -1,0 +1,43 @@
+/dev.env
+
+# Binaries
+admin
+admin.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Test binaries
+*.test
+
+# Directories
+bin/
+cmd/log/
+default.etcd/
+.etcd/
+
+# Log files
+*.log
+*.out
+
+# Build cache
+go-build*/
+*.o
+*.a
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+vendor/
