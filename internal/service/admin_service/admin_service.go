@@ -62,7 +62,7 @@ func CreateAdmin(ctx context.Context, req *CreateAdminReq) error {
 	}
 
 	// 检查账号是否已存在
-	userModel := new(model.User)
+	userModel := new(model.Admin)
 	accountExists, err := userModel.AccountExists(ctx, dbs.Admin, req.Account)
 	if err != nil {
 		zapx.ErrorCtx(ctx, "check account exists failed", zap.Error(err))
@@ -81,7 +81,7 @@ func CreateAdmin(ctx context.Context, req *CreateAdminReq) error {
 	}
 
 	// 创建用户
-	user := &model.User{
+	user := &model.Admin{
 		Account:  req.Account,
 		Password: hashedPassword,
 		RoleID:   req.RoleID,
@@ -120,7 +120,7 @@ type User struct {
 // Login 管理员登录
 func Login(ctx context.Context, req *LoginReq, loginIP string, svrConf *config.ServiceConfig) (*LoginResp, error) {
 	// 查询用户
-	userModel := new(model.User)
+	userModel := new(model.Admin)
 	if err := userModel.GetByAccount(ctx, dbs.Admin, req.Account); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("账号或密码错误")
@@ -229,7 +229,7 @@ func GenerateMFASecret(ctx context.Context, userID int64, issuer string) (*Gener
 	}
 
 	// 查询用户
-	userModel := new(model.User)
+	userModel := new(model.Admin)
 	if err := userModel.GetByID(ctx, dbs.Admin, userID); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("用户不存在")
@@ -272,7 +272,7 @@ type BindMFAReq struct {
 // BindMFA 绑定谷歌验证器
 func BindMFA(ctx context.Context, req *BindMFAReq) error {
 	// 查询用户
-	userModel := new(model.User)
+	userModel := new(model.Admin)
 	if err := userModel.GetByID(ctx, dbs.Admin, req.UserID); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("用户不存在")
@@ -330,7 +330,7 @@ type UnbindMFAReq struct {
 // UnbindMFA 解绑谷歌验证器（仅超级管理员可操作）
 func UnbindMFA(ctx context.Context, req *UnbindMFAReq) error {
 	// 检查操作者是否为超级管理员
-	operatorModel := new(model.User)
+	operatorModel := new(model.Admin)
 	if err := operatorModel.GetByID(ctx, dbs.Admin, req.OperatorID); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("操作者不存在")
@@ -344,7 +344,7 @@ func UnbindMFA(ctx context.Context, req *UnbindMFAReq) error {
 	}
 
 	// 查询目标用户
-	targetUserModel := new(model.User)
+	targetUserModel := new(model.Admin)
 	if err := targetUserModel.GetByID(ctx, dbs.Admin, req.TargetUserID); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("目标用户不存在")

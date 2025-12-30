@@ -18,8 +18,8 @@ type User struct {
 
 const (
 	SessionHeader     = "X-Session-Id"
-	ReqUserID         = "userID"
-	ReqUserAccount    = "userAccount"
+	ReqAdminID        = "adminID"
+	ReqAdminAccount   = "userAccount"
 	ReqRoleID         = "roleID"
 	SessionExpireTime = 3 * 24 * time.Hour
 
@@ -43,15 +43,15 @@ func SetSessionID(c *gin.Context, sid string) {
 	c.Request.Header.Set(SessionHeader, sid)
 }
 
-func UserID(c *gin.Context) int64 {
-	return c.GetInt64(ReqUserID)
+func AdminID(c *gin.Context) int64 {
+	return c.GetInt64(ReqAdminID)
 }
 
-func UserAccount(c *gin.Context) string {
-	return c.GetString(ReqUserAccount)
+func AdminAccount(c *gin.Context) string {
+	return c.GetString(ReqAdminAccount)
 }
 
-func RoleID(c *gin.Context) int {
+func AdminRole(c *gin.Context) int {
 	return c.GetInt(ReqRoleID)
 }
 

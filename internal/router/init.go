@@ -4,22 +4,26 @@ import (
 	"admin/internal/app/routerx"
 	"admin/internal/common/auth"
 	adminHandler "admin/internal/handler/admin"
+	"admin/internal/handler/agent/review"
 	"admin/internal/handler/member"
 	"admin/internal/handler/perm"
 	"admin/internal/middleware"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Init(engine *gin.Engine) {
 	engine.GET("ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-	r := engine.Group("/api/admin/v1")
+	r := engine.Group("/api/v1")
 	adminRouter(r)
-	memberRouter(r)
+	memberRouter(r.Group("/member"))
+	permRouter(r.Group("/perm"))
+	agentRouter(r.Group("/agent"))
 }
 
 // adminRouter 管理员相关路由
@@ -41,14 +45,22 @@ func adminRouter(r *gin.RouterGroup) {
 	}
 }
 
-func memberRouter(r *gin.RouterGroup) {
-	m := r.Group("/member")
-	routerx.PostPerm(m, "/list", auth.MemberList, member.List)
+func permRouter(r *gin.RouterGroup) {
+	r.GET("/", perm.GetAllPermissions)
+	r.GET("/current", perm.GetCurrentUserPermissions)
+	r.GET("/:uid", perm.GetUserPermissions)
+	r.POST("/:uid", perm.UpdateUserPermissions)
+}
 
-	p := r.Group("/permissions")
-	p.GET("", perm.GetAllPermissions)
-	p.GET("/current", perm.GetCurrentUserPermissions)
-	u := r.Group("/user")
-	u.GET("/:uid/permissions", perm.GetUserPermissions)
-	u.POST("/:uid/permissions", perm.UpdateUserPermissions)
+func memberRouter(r *gin.RouterGroup) {
+	routerx.PostPerm(r, "/list", auth.MemberList, member.List)
+}
+
+func agentRouter(r *gin.RouterGroup) {
+	re := r.Group("/review", middleware.Auth())
+	{
+		re.POST("/list", review.List)
+		re.POST("/approve", review.Approve)
+		re.POST("/reject", review.Reject)
+	}
 }

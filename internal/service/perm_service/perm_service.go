@@ -42,7 +42,7 @@ func UserPerms(ctx context.Context, uid int64) ([]string, error) {
 		return cached, nil
 	}
 
-	var userPerm model.UserPerm
+	var userPerm model.AdminPerm
 	err = userPerm.GetByUID(ctx, dbs.Admin, uid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -103,7 +103,7 @@ func UpdateUserPermissions(ctx context.Context, currentUID, targetUID int64, req
 		return fmt.Errorf("failed to marshal permissions: %w", err)
 	}
 
-	userPerm := &model.UserPerm{}
+	userPerm := &model.AdminPerm{}
 	if err := dbs.Admin.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return userPerm.CreateOrUpdate(ctx, tx, targetUID, permsJSON)
 	}); err != nil {

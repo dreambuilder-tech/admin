@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `system`.`system_conf`;
 CREATE TABLE `system`.`system_conf` (
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `key` VARCHAR(40) NOT NULL COMMENT '配置名',
     `val` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '配置值',
     `desc` VARCHAR(40) NOT NULL DEFAULT '' COMMENT '配置说明',

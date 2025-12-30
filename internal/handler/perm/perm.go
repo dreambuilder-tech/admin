@@ -1,11 +1,11 @@
 package perm
 
 import (
-	"admin/internal/app"
 	"admin/internal/common/auth"
 	"admin/internal/service/perm_service"
 	"errors"
 	"strconv"
+	"wallet/common-lib/app"
 	"wallet/common-lib/zapx"
 
 	"gorm.io/gorm"
@@ -20,13 +20,13 @@ type UpdatePermissionsReq struct {
 
 func GetAllPermissions(c *gin.Context) {
 	perms := auth.GetAllPerms()
-	app.SuccessData(c, gin.H{
+	app.Result(c, gin.H{
 		"permissions": perms,
 	})
 }
 
 func GetCurrentUserPermissions(c *gin.Context) {
-	currentUID := auth.UserID(c)
+	currentUID := auth.AdminID(c)
 
 	perms, err := perm_service.UserPerms(c.Request.Context(), currentUID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -39,7 +39,7 @@ func GetCurrentUserPermissions(c *gin.Context) {
 		perms = []string{}
 	}
 
-	app.SuccessData(c, gin.H{
+	app.Result(c, gin.H{
 		"permissions": perms,
 	})
 }
@@ -63,7 +63,7 @@ func GetUserPermissions(c *gin.Context) {
 		perms = []string{}
 	}
 
-	app.SuccessData(c, gin.H{
+	app.Result(c, gin.H{
 		"uid":         uid,
 		"permissions": perms,
 	})
@@ -83,7 +83,7 @@ func UpdateUserPermissions(c *gin.Context) {
 		return
 	}
 
-	if err := perm_service.UpdateUserPermissions(c.Request.Context(), auth.UserID(c), uid, req.Permissions); err != nil {
+	if err := perm_service.UpdateUserPermissions(c.Request.Context(), auth.AdminID(c), uid, req.Permissions); err != nil {
 		zapx.ErrorCtx(c.Request.Context(), "failed to update user permissions", zap.Error(err))
 		app.InternalError(c, "%s", err.Error())
 		return

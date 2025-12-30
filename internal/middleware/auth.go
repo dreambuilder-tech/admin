@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"admin/internal/app"
 	"admin/internal/common/auth"
 	"encoding/json"
 	"errors"
+	"wallet/common-lib/app"
 	"wallet/common-lib/rdb"
 	"wallet/common-lib/zapx"
 
@@ -42,9 +42,9 @@ func Auth() gin.HandlerFunc {
 		}
 		_ = rds.Expire(ctx, sid, auth.SessionExpireTime)
 
-		c.Set(auth.ReqUserID, user.ID)
+		c.Set(auth.ReqAdminID, user.ID)
 		c.Set(auth.ReqRoleID, user.Role)
-		c.Set(auth.ReqUserAccount, user.Account)
+		c.Set(auth.ReqAdminAccount, user.Account)
 
 		c.Next()
 	}

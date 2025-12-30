@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"admin/internal/app"
 	"admin/internal/common/auth"
 	"admin/internal/service/perm_service"
 	"fmt"
+	"wallet/common-lib/app"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +14,7 @@ func CheckPerm() gin.HandlerFunc {
 		key := fmt.Sprintf("%s:%s", c.Request.Method, c.FullPath())
 		if perm, ok := auth.AllRouterPerms[key]; ok {
 			if !check(c, perm) {
-				app.PermDenied(c)
+				app.PermissionDenied(c)
 				return
 			}
 		}
@@ -23,7 +23,7 @@ func CheckPerm() gin.HandlerFunc {
 }
 
 func check(c *gin.Context, perm auth.PermCode) bool {
-	userID := auth.UserID(c)
+	userID := auth.AdminID(c)
 	if userID <= 0 {
 		return false
 	}

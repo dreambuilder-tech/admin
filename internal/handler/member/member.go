@@ -1,8 +1,8 @@
 package member
 
 import (
-	"admin/internal/app"
 	"admin/internal/service/member_service"
+	"wallet/common-lib/app"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,5 +20,5 @@ func List(c *gin.Context) {
 		return
 	}
 
-	app.SuccessPage(c, resp.List, resp.Total)
+	app.ResultPage(c, resp.List, resp.Total)
 }
